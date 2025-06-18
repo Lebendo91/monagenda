@@ -187,6 +187,7 @@
             border-radius: 12px;
             margin-bottom: 15px;
             transition: transform 0.3s ease;
+            animation: slideIn 0.5s ease;
         }
 
         .appointment-item:hover {
@@ -194,452 +195,8 @@
         }
 
         .appointment-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .appointment-date {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .appointment-status {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .status-confirmed {
-            background: #4caf50;
-        }
-
-        .status-pending {
-            background: #ff9800;
-        }
-
-        .status-cancelled {
-            background: #f44336;
-        }
-
-        .delete-btn {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-            transition: background 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background: #d32f2f;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 15% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            color: #4caf50;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .calendar-nav {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .calendar-nav button {
-            background: #4facfe;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .calendar-nav button:hover {
-            background: #3498db;
-        }
-
-        .month-year {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📅 Agenda Interactif</h1>
-            <p>Gérez vos rendez-vous facilement</p>
-        </div>
-
-        <div class="main-content">
-            <div class="form-section">
-                <h2>Nouveau Rendez-vous</h2>
-                
-                <div class="calendar-nav">
-                    <button id="prevMonth">‹ Précédent</button>
-                    <div class="month-year" id="monthYear"></div>
-                    <button id="nextMonth">Suivant ›</button>
-                </div>
-
-                <div class="form-group">
-                    <label for="appointmentDate">Date :</label>
-                    <input type="date" id="appointmentDate" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="motif">Motif :</label>
-                    <select id="motif" required>
-                        <option value="">Sélectionnez un motif</option>
-                        <option value="Entretien embauche">Entretien d'embauche</option>
-                        <option value="Entretien annuel">Entretien annuel</option>
-                        <option value="Réunion équipe">Réunion d'équipe</option>
-                        <option value="Formation">Formation</option>
-                        <option value="Rendez-vous client">Rendez-vous client</option>
-                        <option value="Consultation">Consultation</option>
-                        <option value="Autre">Autre</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="autreMotifGroup" style="display: none;">
-                    <label for="autreMotif">Précisez le motif :</label>
-                    <input type="text" id="autreMotif" placeholder="Décrivez le motif...">
-                </div>
-
-                <div class="form-group">
-                    <label>Type d'horaire :</label>
-                    <div>
-                        <input type="radio" id="plageHoraire" name="timeType" value="plage" checked>
-                        <label for="plageHoraire" style="display: inline; margin-left: 5px;">Plage horaire prédéfinie</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="heurePrecise" name="timeType" value="precise">
-                        <label for="heurePrecise" style="display: inline; margin-left: 5px;">Heure précise</label>
-                    </div>
-                </div>
-
-                <div class="form-group" id="timeSlotsGroup">
-                    <label>Créneaux disponibles :</label>
-                    <div class="time-slots" id="timeSlots">
-                        <div class="time-slot" data-time="08:00">08:00</div>
-                        <div class="time-slot" data-time="09:00">09:00</div>
-                        <div class="time-slot" data-time="10:00">10:00</div>
-                        <div class="time-slot" data-time="11:00">11:00</div>
-                        <div class="time-slot" data-time="14:00">14:00</div>
-                        <div class="time-slot" data-time="15:00">15:00</div>
-                        <div class="time-slot" data-time="16:00">16:00</div>
-                        <div class="time-slot" data-time="17:00">17:00</div>
-                    </div>
-                </div>
-
-                <div class="form-group" id="preciseTimeGroup" style="display: none;">
-                    <label for="preciseTime">Heure précise :</label>
-                    <input type="time" id="preciseTime">
-                </div>
-
-                <div class="form-group">
-                    <label for="duration">Durée (minutes) :</label>
-                    <select id="duration">
-                        <option value="30">30 minutes</option>
-                        <option value="60" selected>1 heure</option>
-                        <option value="90">1h30</option>
-                        <option value="120">2 heures</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="participant">Participant(s) :</label>
-                    <input type="text" id="participant" placeholder="Nom du participant..." required>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Notes (optionnel) :</label>
-                    <textarea id="notes" rows="3" placeholder="Informations complémentaires..."></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" class="btn btn-primary" id="confirmBtn">✅ Confirmer</button>
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">❌ Annuler</button>
-                </div>
-            </div>
-
-            <div class="appointments-section">
-                <h2>Rendez-vous programmés</h2>
-                <div id="appointmentsList">
-                    <p style="text-align: center; color: #666; margin-top: 50px;">
-                        Aucun rendez-vous programmé pour le moment
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de confirmation -->
-    <div id="confirmModal" class="modal">
-        <div class="modal-content">
-            <div class="success-icon">✅</div>
-            <h2>Rendez-vous confirmé !</h2>
-            <p id="confirmDetails"></p>
-            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">OK</button>
-        </div>
-    </div>
-
-    <!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda Interactif</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        function updateMonthYear() {
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 30px;
-        }
-
-        .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
-        }
-
-        .form-section:hover {
-            transform: translateY(-5px);
-        }
-
-        .form-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 3px solid #4facfe;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .time-slot {
-            padding: 10px;
-            background: #f8f9fa;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .time-slot:hover {
-            background: #e3f2fd;
-            border-color: #4facfe;
-        }
-
-        .time-slot.selected {
-            background: #4facfe;
-            color: white;
-            border-color: #4facfe;
-        }
-
-        .time-slot.occupied {
-            background: #ffebee;
-            border-color: #f44336;
-            color: #d32f2f;
-            cursor: not-allowed;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .appointments-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .appointment-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .appointment-item:hover {
-            transform: translateX(5px);
-        }
-
-        .appointment-header {
-            display: flex;
-            justify-content: between;
             align-items: center;
             margin-bottom: 10px;
         }
@@ -776,13 +333,28 @@
             font-weight: bold;
             color: #333;
         }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>📅 Agenda Interactif</h1>
-            <p>Gérez vos rendez-vous facilement</p>
+            <p>Gérez vos rendez-vous facilement - Synchronisé en temps réel</p>
         </div>
 
         <div class="main-content">
@@ -879,9 +451,7 @@
             <div class="appointments-section">
                 <h2>Rendez-vous programmés</h2>
                 <div id="appointmentsList">
-                    <p style="text-align: center; color: #666; margin-top: 50px;">
-                        Aucun rendez-vous programmé pour le moment
-                    </p>
+                    <div class="loading">Chargement des rendez-vous...</div>
                 </div>
             </div>
         </div>
@@ -897,12 +467,22 @@
         </div>
     </div>
 
-    <!-- Firebase App -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-    <!-- Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+    <!-- Firebase SDKs v9 (modular) -->
+    <script type="module">
+        // Import des modules Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            deleteDoc, 
+            doc, 
+            onSnapshot, 
+            orderBy, 
+            query,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-    <script>
         // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD2p_sZBN_M1u-_mQ3cILy-kkiRk_s9pKc",
@@ -914,9 +494,10 @@
         };
 
         // Initialiser Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
+        // Variables globales
         let appointments = [];
         let selectedTimeSlot = null;
         let currentDate = new Date();
@@ -926,20 +507,38 @@
             updateMonthYear();
             setMinDate();
             setupEventListeners();
-            loadAppointments(); // 👈 on récupère les rendez-vous en ligne
+            loadAppointments();
         });
 
         // Charger les rendez-vous en temps réel depuis Firebase
         function loadAppointments() {
-            db.collection("appointments").onSnapshot(snapshot => {
-                appointments = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                updateAppointmentsList();
-                updateTimeSlots();
-            });
+            try {
+                const appointmentsQuery = query(
+                    collection(db, "appointments"),
+                    orderBy("date"),
+                    orderBy("time")
+                );
+
+                onSnapshot(appointmentsQuery, (snapshot) => {
+                    appointments = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    
+                    console.log("Rendez-vous chargés:", appointments.length);
+                    updateAppointmentsList();
+                    updateTimeSlots();
+                }, (error) => {
+                    console.error("Erreur lors du chargement:", error);
+                    showError("Erreur de connexion à la base de données");
+                });
+            } catch (error) {
+                console.error("Erreur d'initialisation Firebase:", error);
+                showError("Impossible de se connecter à Firebase");
+            }
         }
+
+        function updateMonthYear() {
             const months = [
                 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
                 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
@@ -1033,7 +632,7 @@
             selectedTimeSlot = null;
         }
 
-        function confirmAppointment() {
+        async function confirmAppointment() {
             const date = document.getElementById('appointmentDate').value;
             const motif = document.getElementById('motif').value;
             const autreMotif = document.getElementById('autreMotif').value;
@@ -1063,22 +662,48 @@
                 }
             }
 
+            // Vérifier la disponibilité du créneau
+            const isSlotTaken = appointments.some(app => 
+                app.date === date && app.time === time
+            );
+
+            if (isSlotTaken) {
+                alert('Ce créneau est déjà occupé. Veuillez en choisir un autre.');
+                return;
+            }
+
             // Créer le rendez-vous
             const appointment = {
                 date: date,
                 time: time,
                 motif: motif === 'Autre' ? autreMotif : motif,
-                duration: duration,
+                duration: parseInt(duration),
                 participant: participant,
-                notes: notes,
-                status: 'confirmed'
+                notes: notes || '',
+                status: 'confirmed',
+                createdAt: serverTimestamp()
             };
 
-            // Sauvegarder dans Firebase
-            db.collection("appointments").add(appointment).then(() => {
+            try {
+                // Désactiver le bouton pendant l'ajout
+                const confirmBtn = document.getElementById('confirmBtn');
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Ajout en cours...';
+
+                // Sauvegarder dans Firebase
+                await addDoc(collection(db, "appointments"), appointment);
+                
                 showConfirmModal(appointment);
                 resetForm();
-            });
+            } catch (error) {
+                console.error("Erreur lors de l'ajout:", error);
+                alert('Erreur lors de la sauvegarde. Veuillez réessayer.');
+            } finally {
+                // Réactiver le bouton
+                const confirmBtn = document.getElementById('confirmBtn');
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = '✅ Confirmer';
+            }
         }
 
         function showConfirmModal(appointment) {
@@ -1128,7 +753,7 @@
                                 ${app.status === 'confirmed' ? 'Confirmé' : 
                                   app.status === 'pending' ? 'En attente' : 'Annulé'}
                             </span>
-                            <button class="delete-btn" onclick="deleteAppointment(${app.id})">🗑️</button>
+                            <button class="delete-btn" onclick="deleteAppointment('${app.id}')">🗑️</button>
                         </div>
                     </div>
                     <div><strong>Motif:</strong> ${app.motif}</div>
@@ -1139,13 +764,16 @@
             `).join('');
         }
 
-        function deleteAppointment(id) {
+        // Fonction globale pour supprimer un rendez-vous
+        window.deleteAppointment = async function(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')) {
-                db.collection("appointments").doc(id).delete().then(() => {
+                try {
+                    await deleteDoc(doc(db, "appointments", id));
                     console.log("Rendez-vous supprimé avec succès");
-                }).catch((error) => {
-                    console.error("Erreur lors de la suppression: ", error);
-                });
+                } catch (error) {
+                    console.error("Erreur lors de la suppression:", error);
+                    alert('Erreur lors de la suppression. Veuillez réessayer.');
+                }
             }
         }
 
@@ -1172,6 +800,16 @@
             selectedTimeSlot = null;
         }
 
+        function showError(message) {
+            const container = document.getElementById('appointmentsList');
+            container.innerHTML = `
+                <div class="error">
+                    <strong>Erreur:</strong> ${message}
+                    <br><small>Vérifiez votre connexion internet et rechargez la page.</small>
+                </div>
+            `;
+        }
+
         // Fermer la modal en cliquant à l'extérieur
         window.onclick = function(event) {
             const modal = document.getElementById('confirmModal');
@@ -1179,6 +817,9 @@
                 closeModal();
             }
         }
+
+        // Rendre closeModal globale
+        window.closeModal = closeModal;
     </script>
 </body>
 </html>
